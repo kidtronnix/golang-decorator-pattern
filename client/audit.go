@@ -1,16 +1,15 @@
 package client
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 )
 
-// This function will create and Audit decorator. We could use this for adding
-// this action to an audit trail
-func Audit() ClientDecorator {
+// Audit will create a client decorator with auditing concerns.
+func Audit(l *log.Logger) Decorator {
 	return func(c Client) Client {
-		return DoFunc(func(r *http.Request) (*http.Response, error) {
-			fmt.Println("[audit] added to audit trail")
+		return ClientFunc(func(r *http.Request) (*http.Response, error) {
+			l.Println("added to audit trail")
 			return c.Do(r)
 		})
 	}

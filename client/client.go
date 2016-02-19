@@ -14,21 +14,25 @@ type Client interface {
 }
 
 // We define what a decorator to our client will look like
-type ClientDecorator func(Client) Client
+type Decorator func(Client) Client
 
 // Singature of DoFunc
-type DoFunc func(*http.Request) (*http.Response, error)
+type ClientFunc func(*http.Request) (*http.Response, error)
 
 // Add method to DoFunc type to satisfy Client interface
-func (d DoFunc) Do(r *http.Request) (*http.Response, error) {
-	return d(r)
+func (f ClientFunc) Do(r *http.Request) (*http.Response, error) {
+	return f(r)
 }
 
 func NewClient() Client {
+
 	c := Client(MockClient{})
-	l := log.New(os.Stdout, "", 0)
+
+	l := log.New(os.Stdout, "[logging decorator]", 0)
 	c = Logging(l)(c)
-	c = Audit()(c)
+
+	l = log.New(os.Stdout, "[audit decorator]", 0)
+	c = Audit(l)(c)
 
 	return c
 }

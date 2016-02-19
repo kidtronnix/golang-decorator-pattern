@@ -5,11 +5,12 @@ import (
 	"net/http"
 )
 
-// Here is an example of a mock client that can be used to do pretend http requests.
-// Notice our client has no knowledge of the other decorators that have orthogonal concerns.
+// MockClient is used to do pretend http requests.
+// Notice MockClient has no knowledge of the other decorators that have orthogonal concerns.
 type MockClient struct{}
 
-func (mc MockClient) Do(*http.Request) (*http.Response, error) {
-	fmt.Println("[client] Doing my ting")
+// Do will do a pretend http request. Do be doo.
+func (mc MockClient) Do(r *http.Request) (*http.Response, error) {
+	fmt.Println("Mock request to: " + r.Host)
 	return &http.Response{}, nil
 }
