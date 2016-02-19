@@ -6,9 +6,8 @@ import (
 	"os"
 )
 
-// Our client that will be composed of many layers of functionality
-// In this example when we call Do(r), we want to respond with a http response,
-// do some logging, and then write to the audit trail.
+
+// Our client is defined as something that does a http request and gets a response and error
 type Client interface {
 	Do(*http.Request) (*http.Response, error)
 }
@@ -24,11 +23,13 @@ func (d DoFunc) Do(r *http.Request) (*http.Response, error) {
 	return d(r)
 }
 
+// Our client that will be composed of many layers of functionality
+// In this example when we call Do(r), we want to do some logging, write to the audit trail 
+// and do a mock http request.
 func NewClient() Client {
-	c := Client(MockClient{})
 	l := log.New(os.Stdout, "", 0)
+	c := Client(MockClient{})
 	c = Logging(l)(c)
 	c = Audit()(c)
-
 	return c
 }
