@@ -13,9 +13,6 @@ type Client interface {
 	Do(*http.Request) (*http.Response, error)
 }
 
-// We define what a decorator to our client will look like
-type Decorator func(Client) Client
-
 // Singature of DoFunc
 type ClientFunc func(*http.Request) (*http.Response, error)
 
@@ -24,15 +21,10 @@ func (f ClientFunc) Do(r *http.Request) (*http.Response, error) {
 	return f(r)
 }
 
+// NewClient will return a new client complete with all our decorators.
 func NewClient() Client {
-
-	c := Client(MockClient{})
-
-	l := log.New(os.Stdout, "[logging decorator]", 0)
-	c = Logging(l)(c)
-
-	l = log.New(os.Stdout, "[audit decorator]", 0)
-	c = Audit(l)(c)
-
-	return c
+	return Decorate(MockClient{},
+		Logging(log.New(os.Stdout, "[logging decorator] ", 0)),
+		Audit(log.New(os.Stdout, "[audit decorator] ", 0)),
+	)
 }
