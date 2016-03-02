@@ -6,9 +6,7 @@ import (
 	"os"
 )
 
-// Our client that will be composed of many layers of functionality
-// In this example when we call Do(r), we want to respond with a http response,
-// do some logging, and then write to the audit trail.
+// Our client is defined as something that does a http request and gets a response and error
 type Client interface {
 	Do(*http.Request) (*http.Response, error)
 }
